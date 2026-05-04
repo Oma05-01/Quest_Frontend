@@ -78,31 +78,33 @@ export default function Login() {
   };
 
   // 3. REGISTER
+  const [role, setRole] = useState('tenant'); 
+
   const handleRegisterSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setErrorMsg('');
+      e.preventDefault();
+      setIsLoading(true);
+      setErrorMsg('');
 
-    const fullName = `${firstName} ${lastName}`.trim();
+      const fullName = `${firstName} ${lastName}`.trim();
 
-    try {
-      const res = await fetch(`${API_BASE}/register/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name: fullName, password })
-      });
-      
-      if (res.ok) {
-        // 🟢 Show the sleek modal instead of the browser alert
-        setShowSuccessModal(true); 
-      } else {
-        setErrorMsg('Registration failed. Please check your details.');
+      try {
+        const res = await fetch(`${API_BASE}/register/`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          // 🟢 2. Add 'role' to the body here
+          body: JSON.stringify({ email, name: fullName, password, role }) 
+        });
+        
+        if (res.ok) {
+          setShowSuccessModal(true); 
+        } else {
+          setErrorMsg('Registration failed. Please check your details.');
+        }
+      } catch (err) {
+        setErrorMsg('Registration failed. Please try again.');
+      } finally {
+        setIsLoading(false);
       }
-    } catch (err) {
-      setErrorMsg('Registration failed. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   return (
@@ -170,6 +172,28 @@ export default function Login() {
             <div className="text-center mb-6">
               <h2 className="text-2xl font-bold text-quest-navy">Create your account</h2>
             </div>
+
+            <div className="flex bg-slate-100 p-1 rounded-xl mb-6">
+              <button
+                type="button"
+                onClick={() => setRole('tenant')}
+                className={`flex-1 py-2 text-sm font-bold rounded-lg transition ${
+                  role === 'tenant' ? 'bg-white text-quest-navy shadow-sm' : 'text-slate-500 hover:text-quest-navy'
+                }`}
+              >
+                I am a Tenant
+              </button>
+              <button
+                type="button"
+                onClick={() => setRole('landlord')}
+                className={`flex-1 py-2 text-sm font-bold rounded-lg transition ${
+                  role === 'landlord' ? 'bg-white text-quest-navy shadow-sm' : 'text-slate-500 hover:text-quest-navy'
+                }`}
+              >
+                I am a Landlord
+              </button>
+            </div>
+            
             <div>
               <label className="block text-sm font-semibold text-slate-500 mb-1.5">Email Address</label>
               <input type="email" value={email} disabled className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-500 cursor-not-allowed" />

@@ -1,10 +1,20 @@
 import { useState, useEffect } from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import NotificationBell from './NotificationBell';
 import OrgSwitcher from './OrgSwitcher';
 
 export default function DashboardLayout() {
-  const location = useLocation(); 
+  const location = useLocation();
+  const navigate = useNavigate(); 
+
+  const handleLogout = () => {
+    // Wipe the tokens from the browser
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    
+    // Send them back to the login page
+    navigate('/login');
+  };
   
   // 🟢 1. State for Sidebar Toggle
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -116,6 +126,15 @@ export default function DashboardLayout() {
               </div>
             )}
           </div>
+        </div>
+
+        <div className="p-4 border-t border-slate-100 mt-auto">
+          <button 
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-4 py-3 text-red-500 font-bold rounded-xl hover:bg-red-50 transition"
+          >
+            <span>🚪</span> Log Out
+          </button>
         </div>
       </aside>
 
