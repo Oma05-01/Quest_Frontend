@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@theme {
+  --color-quest-navy: #0F2C59;
+  --color-quest-blue: #8BB8E8;
+  --color-quest-slate: #F8FAFC;
+}
+
+body {
+  background-color: var(--color-quest-slate);
+  color: var(--color-quest-navy);
+}
