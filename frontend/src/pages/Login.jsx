@@ -31,15 +31,21 @@ export default function Login() {
         body: JSON.stringify({ email })
       });
       
+      // 🟢 THE SAFETY CHECK: Stop HTML from crashing the app
+      if (!res.ok) {
+         // If it's a 500 error, res.text() will grab the HTML without crashing
+         const errorText = await res.text(); 
+         throw new Error(`Server error ${res.status}. Please check Render logs.`);
+      }
+
+      // If we pass the check, it is safe to parse the JSON
       const data = await res.json();
+      
       if (data.exists) {
         setStep('PASSWORD');
       } else {
         setStep('REGISTER');
       }
-    } catch (err) {
-    // 1. Log the full error object to your browser console (F12 -> Console)
-    console.error("Full Login Error:", err);
     
     // 2. Set the actual error message to display on the screen
     // If err.message exists, use it. Otherwise, fall back to a generic string.
@@ -57,7 +63,7 @@ export default function Login() {
     setErrorMsg('');
 
     try {
-      const res = await fetch(`${API_BASE}/login/`, {
+      const res = await fetch(`${API_BASE}/api/auth/login/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -94,7 +100,7 @@ export default function Login() {
       const fullName = `${firstName} ${lastName}`.trim();
 
       try {
-        const res = await fetch(`${API_BASE}/register/`, {
+        const res = await fetch(`${API_BASE}/api/auth/register/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           // 🟢 2. Add 'role' to the body here
