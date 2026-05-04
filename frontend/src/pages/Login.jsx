@@ -25,7 +25,7 @@ export default function Login() {
     setErrorMsg('');
 
     try {
-      const res = await fetch(`${API_BASE}/api/auth/check-email/`, {
+      const res = await fetch(`${API_BASE}/check-email/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
