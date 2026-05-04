@@ -38,9 +38,15 @@ export default function Login() {
         setStep('REGISTER');
       }
     } catch (err) {
-      setErrorMsg('Failed to connect to server. Please try again.');
+    // 1. Log the full error object to your browser console (F12 -> Console)
+    console.error("Full Login Error:", err);
+    
+    // 2. Set the actual error message to display on the screen
+    // If err.message exists, use it. Otherwise, fall back to a generic string.
+    setErrorMsg(err.message || 'An unexpected error occurred.');
+    
     } finally {
-      setIsLoading(false);
+        setIsLoading(false);
     }
   };
 
