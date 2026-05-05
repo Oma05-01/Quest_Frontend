@@ -9,14 +9,16 @@ export default function Login() {
   const [step, setStep] = useState('EMAIL'); 
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [showResend, setShowResend] = useState(false);
 
   // Form Data
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [role, setRole] = useState('tenant'); 
 
-  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'; // Ensure this matches your Django port
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
 
   // 1. CHECK EMAIL
   const handleEmailSubmit = async (e) => {
@@ -28,17 +30,13 @@ export default function Login() {
       const res = await fetch(`${API_BASE}/api/auth/check-email/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
+        body: JSON.stringify({ email: email.toLowerCase() })
       });
       
-      // 🟢 THE SAFETY CHECK: Stop HTML from crashing the app
       if (!res.ok) {
-         // If it's a 500 error, res.text() will grab the HTML without crashing
-         const errorText = await res.text(); 
-         throw new Error(`Server error ${res.status}. Please check Render logs.`);
+         throw new Error(`Server error ${res.status}. Please check backend connectivity.`);
       }
 
-      // If we pass the check, it is safe to parse the JSON
       const data = await res.json();
       
       if (data.exists) {
@@ -46,13 +44,10 @@ export default function Login() {
       } else {
         setStep('REGISTER');
       }
-    
-    // 2. Set the actual error message to display on the screen
-    // If err.message exists, use it. Otherwise, fall back to a generic string.
-    setErrorMsg(err.message || 'An unexpected error occurred.');
-    
+    } catch (err) {
+      setErrorMsg(err.message || 'An unexpected error occurred.');
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -61,25 +56,27 @@ export default function Login() {
     e.preventDefault();
     setIsLoading(true);
     setErrorMsg('');
+    setShowResend(false);
 
     try {
       const res = await fetch(`${API_BASE}/api/auth/login/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email: email.toLowerCase(), password })
       });
       
       const data = await res.json();
       
       if (res.ok) {
-        // Store JWT tokens securely
         localStorage.setItem('access_token', data.access);
         localStorage.setItem('refresh_token', data.refresh);
         localStorage.setItem('user', JSON.stringify(data.user));
-        
-        // Redirect to dashboard
         navigate('/dashboard');
       } else {
+        // If account is unverified, show the resend button
+        if (res.status === 403) {
+            setShowResend(true);
+        }
         setErrorMsg(data.detail || 'Invalid email or password.');
       }
     } catch (err) {
@@ -90,8 +87,6 @@ export default function Login() {
   };
 
   // 3. REGISTER
-  const [role, setRole] = useState('tenant'); 
-
   const handleRegisterSubmit = async (e) => {
       e.preventDefault();
       setIsLoading(true);
@@ -103,20 +98,47 @@ export default function Login() {
         const res = await fetch(`${API_BASE}/api/auth/register/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          // 🟢 2. Add 'role' to the body here
-          body: JSON.stringify({ email, name: fullName, password, role }) 
+          body: JSON.stringify({ email: email.toLowerCase(), name: fullName, password, role }) 
         });
         
         if (res.ok) {
           setShowSuccessModal(true); 
         } else {
-          setErrorMsg('Registration failed. Please check your details.');
+          const data = await res.json();
+          setErrorMsg(data.detail || 'Registration failed. Please check your details.');
         }
       } catch (err) {
         setErrorMsg('Registration failed. Please try again.');
       } finally {
         setIsLoading(false);
       }
+  };
+
+  // 4. RESEND VERIFICATION
+  const handleResendEmail = async () => {
+    setIsLoading(true);
+    setErrorMsg('');
+
+    try {
+      const res = await fetch(`${API_BASE}/api/auth/resend-verification/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.toLowerCase() })
+      });
+      
+      const data = await res.json();
+      
+      if (res.ok) {
+        setErrorMsg('Verification email sent! Please check your inbox.');
+        setShowResend(false); 
+      } else {
+        setErrorMsg(data.detail || 'Failed to resend email.');
+      }
+    } catch (err) {
+      setErrorMsg('Failed to connect to server.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -127,7 +149,6 @@ export default function Login() {
           <img src="/logo-full.png" alt="QuestNest Logo" className="h-16 w-auto" />
         </div>
 
-        {/* Global Error Banner */}
         {errorMsg && (
           <div className="mb-6 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm text-center font-medium">
             {errorMsg}
@@ -161,7 +182,7 @@ export default function Login() {
               <h2 className="text-2xl font-bold text-quest-navy">Welcome back</h2>
               <div className="inline-flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-full mt-2 border border-slate-200">
                 <span className="text-sm font-medium text-slate-700">{email}</span>
-                <button type="button" onClick={() => setStep('EMAIL')} className="text-xs text-quest-blue font-bold ml-2">Edit</button>
+                <button type="button" onClick={() => { setStep('EMAIL'); setShowResend(false); }} className="text-xs text-quest-blue font-bold ml-2">Edit</button>
               </div>
             </div>
             <div>
@@ -175,6 +196,17 @@ export default function Login() {
             <button disabled={isLoading} className="w-full bg-quest-navy text-white font-bold py-3.5 rounded-xl hover:bg-quest-navy/90 disabled:opacity-50">
               {isLoading ? 'Signing In...' : 'Sign In to QuestNest'}
             </button>
+
+            {showResend && (
+              <button 
+                type="button" 
+                onClick={handleResendEmail}
+                disabled={isLoading} 
+                className="w-full mt-3 bg-slate-100 text-quest-navy font-bold py-3.5 rounded-xl border border-slate-200 hover:bg-slate-200 disabled:opacity-50 transition"
+              >
+                {isLoading ? 'Sending...' : 'Resend Verification Email'}
+              </button>
+            )}
           </form>
         )}
 
@@ -228,7 +260,6 @@ export default function Login() {
               {isLoading ? 'Creating Account...' : 'Complete Registration'}
             </button>
 
-            {/* 🟢 The QuestNest Success Modal */}
             {showSuccessModal && (
               <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in">
                 <div className="bg-white max-w-sm w-full p-8 rounded-3xl shadow-2xl text-center zoom-in-95 animate-in duration-300">
@@ -242,7 +273,7 @@ export default function Login() {
                   <button 
                     onClick={() => {
                       setShowSuccessModal(false);
-                      setStep('EMAIL'); // Go back to login start
+                      setStep('EMAIL');
                       setPassword('');
                     }}
                     type="button"
