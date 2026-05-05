@@ -4,6 +4,7 @@ export default function LandlordTenancies() {
   const [tenancies, setTenancies] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+    const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
 
   useEffect(() => {
     const fetchTenancies = async () => {
@@ -11,7 +12,7 @@ export default function LandlordTenancies() {
       
       try {
         // Adjust the URL if your accounts/api/urls.py mapping is different
-        const response = await fetch('http://127.0.0.1:8000/api/dashboard/tenancies/', {
+        const response = await fetch(`${API_BASE}/api/dashboard/tenancies/`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'

@@ -5,6 +5,8 @@ export default function NotificationBell() {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
+
   
   const dropdownRef = useRef(null);
 
@@ -15,7 +17,7 @@ export default function NotificationBell() {
       if (!token) return;
 
       try {
-        const res = await fetch('http://127.0.0.1:8000/api/dashboard/notifications/', {
+        const res = await fetch(`${API_BASE}/api/dashboard/notifications/`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         
@@ -57,7 +59,7 @@ export default function NotificationBell() {
     setUnreadCount(prev => Math.max(0, prev - 1));
 
     try {
-      await fetch(`http://127.0.0.1:8000/api/dashboard/notifications/${id}/read/`, {
+      await fetch(`${API_BASE}/api/dashboard/notifications/${id}/read/`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,

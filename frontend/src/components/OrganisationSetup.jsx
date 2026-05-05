@@ -4,6 +4,8 @@ export default function OrganisationSetup({ onComplete }) {
   const [name, setName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -13,7 +15,7 @@ export default function OrganisationSetup({ onComplete }) {
     const token = localStorage.getItem('access_token');
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/organisations/', {
+      const response = await fetch(`${API_BASE}/api/organisations/`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

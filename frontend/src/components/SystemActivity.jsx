@@ -4,6 +4,8 @@ export default function SystemActivity() {
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
+
 
   useEffect(() => {
     const fetchActivity = async () => {
@@ -11,7 +13,7 @@ export default function SystemActivity() {
       
       try {
         // Adjust the URL to match your urls.py for SystemActivityView
-        const response = await fetch('http://127.0.0.1:8000/api/dashboard/activity/', {
+        const response = await fetch(`${API_BASE}/api/dashboard/activity/`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'

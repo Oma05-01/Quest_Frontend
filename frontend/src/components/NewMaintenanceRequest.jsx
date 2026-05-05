@@ -6,6 +6,8 @@ export default function NewMaintenanceRequest({ isOpen, onClose, onSuccess }) {
   const [priority, setPriority] = useState('medium');
   const [images, setImages] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
+
   
   // We need to know which unit/org the tenant belongs to
   const [activeLease, setActiveLease] = useState(null);
@@ -15,7 +17,7 @@ export default function NewMaintenanceRequest({ isOpen, onClose, onSuccess }) {
       // Fetch the tenant's active lease to automatically get the unit_id and org_id
       const fetchLease = async () => {
         const token = localStorage.getItem('access_token');
-        const res = await fetch('http://127.0.0.1:8000/api/leases/', { // Adjust to your actual leases endpoint
+        const res = await fetch(`${API_BASE}/api/leases/`, { // Adjust to your actual leases endpoint
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
@@ -57,7 +59,7 @@ export default function NewMaintenanceRequest({ isOpen, onClose, onSuccess }) {
     });
 
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/maintenance/', {
+      const res = await fetch(`${API_BASE}/api/maintenance/`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
