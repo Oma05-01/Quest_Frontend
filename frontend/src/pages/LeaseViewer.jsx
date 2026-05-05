@@ -5,6 +5,7 @@ export default function LeaseViewer() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [isFunding, setIsFunding] = useState(false);
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
   
   const [lease, setLease] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -19,7 +20,7 @@ export default function LeaseViewer() {
     const token = localStorage.getItem('access_token');
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/escrows/${escrowId}/fund/`, {
+      const response = await fetch(`${API_BASE}/api/escrows/${escrowId}/fund/`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -60,7 +61,7 @@ export default function LeaseViewer() {
     }
     
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/leases/${id}/`, {
+      const response = await fetch(`${API_BASE}/api/leases/${id}/`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
@@ -91,7 +92,7 @@ export default function LeaseViewer() {
     const token = localStorage.getItem('access_token');
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/leases/${id}/sign/`, {
+      const response = await fetch(`${API_BASE}/api/leases/${id}/sign/`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

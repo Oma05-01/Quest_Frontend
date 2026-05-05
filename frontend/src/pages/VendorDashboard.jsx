@@ -3,10 +3,11 @@ import { useState, useEffect } from 'react';
 export default function VendorDashboard() {
   const [tasks, setTasks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
 
   useEffect(() => {
     const token = localStorage.getItem('access_token');
-    fetch('http://127.0.0.1:8000/api/maintenance/my-tasks/', {
+    fetch(`${API_BASE}/api/maintenance/my-tasks/`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
     .then(res => res.json())

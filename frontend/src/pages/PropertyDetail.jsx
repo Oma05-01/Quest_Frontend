@@ -4,6 +4,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 export default function PropertyDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
   
   // Property State
   const [asset, setAsset] = useState(null);
@@ -33,7 +34,7 @@ export default function PropertyDetail() {
     
     try {
       // 1. Fetch Property Info
-      const propRes = await fetch(`http://127.0.0.1:8000/api/assets/${id}/`, {
+      const propRes = await fetch(`${API_BASE}/api/assets/${id}/`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
@@ -48,7 +49,7 @@ export default function PropertyDetail() {
       setFormData({ name: propData.name, location: propData.location });
 
       // 2. Fetch Units
-      const unitRes = await fetch(`http://127.0.0.1:8000/api/assets/${id}/units/`, {
+      const unitRes = await fetch(`${API_BASE}/api/assets/${id}/units/`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
@@ -75,7 +76,7 @@ export default function PropertyDetail() {
     const token = localStorage.getItem('access_token');
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/assets/${id}/`, {
+      const response = await fetch(`${API_BASE}/api/assets/${id}/`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -101,7 +102,7 @@ export default function PropertyDetail() {
     const token = localStorage.getItem('access_token');
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/assets/${id}/`, {
+      const response = await fetch(`${API_BASE}/api/assets/${id}/`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -122,7 +123,7 @@ export default function PropertyDetail() {
     const token = localStorage.getItem('access_token');
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/assets/${id}/units/`, {
+      const response = await fetch(`${API_BASE}/api/assets/${id}/units/`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

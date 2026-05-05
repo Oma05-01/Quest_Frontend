@@ -9,6 +9,7 @@ export default function Wallet() {
   const [isFundModalOpen, setIsFundModalOpen] = useState(false);
   const [fundAmount, setFundAmount] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
 
 
   const handleInitializeFunding = async (e) => {
@@ -17,7 +18,7 @@ export default function Wallet() {
   const token = localStorage.getItem('access_token');
 
   try {
-    const response = await fetch('http://127.0.0.1:8000/api/wallet/fund/init/', {
+    const response = await fetch(`${API_BASE}/api/wallet/fund/init/`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -49,9 +50,9 @@ export default function Wallet() {
     try {
       // We can fetch Wallet, Transactions, and Escrows all at the same time!
       const [walletRes, transRes, escrowRes] = await Promise.all([
-        fetch('http://127.0.0.1:8000/api/wallet/', { headers }),
-        fetch('http://127.0.0.1:8000/api/wallet/transactions/', { headers }),
-        fetch('http://127.0.0.1:8000/api/escrows/', { headers })
+        fetch(`${API_BASE}/api/wallet/`, { headers }),
+        fetch(`${API_BASE}/api/wallet/transactions/`, { headers }),
+        fetch(`${API_BASE}/api/escrows/`, { headers })
       ]);
 
       if (!walletRes.ok) throw new Error('Failed to fetch wallet data');

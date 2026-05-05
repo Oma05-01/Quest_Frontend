@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import TenantPaymentHistory from '../components/TenantPaymentHistory'; // 🟢 1. Import it here
 
 export default function TenantDashboard() {
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
   const navigate = useNavigate();
   const [stats, setStats] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -18,7 +19,7 @@ export default function TenantDashboard() {
       }
 
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/dashboard/tenant/', {
+        const response = await fetch(`${API_BASE}/api/dashboard/tenant/`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'

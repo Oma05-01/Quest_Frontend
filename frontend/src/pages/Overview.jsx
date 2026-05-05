@@ -10,6 +10,7 @@ export default function Overview() {
   // New States for Organisation Flow
   const [hasCheckedOrgs, setHasCheckedOrgs] = useState(false);
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
 
   useEffect(() => {
     const userString = localStorage.getItem('user');
@@ -34,7 +35,7 @@ export default function Overview() {
   const checkOrganisations = async () => {
     const token = localStorage.getItem('access_token');
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/organisations/', {
+      const response = await fetch(`${API_BASE}/api/organisations/`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       

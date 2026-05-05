@@ -9,6 +9,8 @@ export default function Messages() {
   const [newMessage, setNewMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
+
 
   const [showNewChat, setShowNewChat] = useState(false);
 const [availableContacts, setAvailableContacts] = useState([]); // You'll fetch this from your backend
@@ -16,7 +18,7 @@ const [availableContacts, setAvailableContacts] = useState([]); // You'll fetch 
 // 2. Add this function to handle starting a chat
 const handleStartChat = async (targetUserId) => {
   const token = localStorage.getItem('access_token');
-  const res = await fetch('http://127.0.0.1:8000/api/messages/start/', {
+  const res = await fetch(`${API_BASE}/api/messages/start/`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -38,7 +40,7 @@ useEffect(() => {
     const fetchContacts = async () => {
       const token = localStorage.getItem('access_token');
       try {
-        const res = await fetch('http://127.0.0.1:8000/api/messages/contacts/', {
+        const res = await fetch(`${API_BASE}/api/messages/contacts/`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (res.ok) {
@@ -61,7 +63,7 @@ useEffect(() => {
       const token = localStorage.getItem('access_token');
       try {
         // Adjust this URL to match your user_messages app's inbox endpoint
-        const res = await fetch('http://127.0.0.1:8000/api/messages/inbox/', {
+        const res = await fetch(`${API_BASE}/api/messages/inbox/`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (res.ok) {
@@ -85,7 +87,7 @@ useEffect(() => {
       const token = localStorage.getItem('access_token');
       try {
         // Adjust this URL to match your user_messages app's detail endpoint
-        const res = await fetch(`http://127.0.0.1:8000/api/messages/${activeChat.id}/`, {
+        const res = await fetch(`${API_BASE}/api/messages/${activeChat.id}/`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (res.ok) {
@@ -114,7 +116,7 @@ useEffect(() => {
     const token = localStorage.getItem('access_token');
 
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/messages/${activeChat.id}/`, {
+      const res = await fetch(`${API_BASE}/api/messages/${activeChat.id}/`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

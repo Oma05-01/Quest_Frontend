@@ -6,11 +6,13 @@ export default function Maintenance() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
+
   // Fetch the tenant's maintenance history
   const fetchIssues = async () => {
     const token = localStorage.getItem('access_token');
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/maintenance/', {
+      const res = await fetch(`${API_BASE}/api/maintenance/`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {

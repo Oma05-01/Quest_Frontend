@@ -7,6 +7,8 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
+
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -18,7 +20,7 @@ export default function AdminDashboard() {
       }
 
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/dashboard/admin/', {
+        const response = await fetch(`${API_BASE}/api/dashboard/admin/`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'

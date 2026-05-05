@@ -5,6 +5,7 @@ export default function PaymentSuccess() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const hasVerified = useRef(false); // Prevents double-calling the API in StrictMode
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
 
   const [status, setStatus] = useState('verifying'); // 'verifying', 'success', 'error'
   const [message, setMessage] = useState('Please wait while we verify your payment...');
@@ -24,7 +25,7 @@ export default function PaymentSuccess() {
     const verifyPayment = async () => {
       const token = localStorage.getItem('access_token');
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/wallet/fund/verify/', {
+        const response = await fetch(`${API_BASE}/api/wallet/fund/verify/`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,

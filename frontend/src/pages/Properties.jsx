@@ -5,6 +5,7 @@ export default function Properties() {
   const [assets, setAssets] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,7 +19,7 @@ export default function Properties() {
     const token = localStorage.getItem('access_token');
     
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/assets/', {
+      const response = await fetch(`${API_BASE}/api/assets/`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
@@ -46,7 +47,7 @@ export default function Properties() {
     const token = localStorage.getItem('access_token');
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/assets/', {
+      const response = await fetch(`${API_BASE}/api/assets/`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

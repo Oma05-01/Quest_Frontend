@@ -4,6 +4,7 @@ export default function Settings() {
   const [formData, setFormData] = useState({ name: '', email: '' });
   const [isSaving, setIsSaving] = useState(false);
   const [status, setStatus] = useState({ type: '', message: '' });
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
 
   // Load the user data from localStorage when the component mounts
   useEffect(() => {
@@ -35,7 +36,7 @@ export default function Settings() {
 
     try {
       // Send the PATCH request to your Django UserUpdateView
-      const response = await fetch('http://127.0.0.1:8000/api/auth/profile/', {
+      const response = await fetch(`${API_BASE}/api/auth/profile/`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,

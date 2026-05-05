@@ -8,11 +8,12 @@ export default function VerifyEmail() {
   // UI State: 'verifying', 'success', 'error'
   const [status, setStatus] = useState('verifying');
   const [message, setMessage] = useState('');
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
 
   useEffect(() => {
     const verifyAccount = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:8000/api/auth/verify-email/${uid}/${token}/`, {
+        const response = await fetch(`${API_BASE}/api/auth/verify-email/${uid}/${token}/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' }
         });
